@@ -1,0 +1,21 @@
+- hosts: all
+  tasks:
+  - name: ping
+    ping:
+  - name: install wget
+    apt: name=wget state=latest
+    become: yes
+- hosts: web
+  tasks:
+  - name: install unzip
+    apt: name=unzip state=latest update_cache=true
+    become: yes
+- hosts: loadBalance
+  become: yes
+  tasks:
+  - name: install nginx
+    apt: name=nginx state=latest update_cache=true
+  - name: start nginx
+    service:
+      name: nginx
+      state: started
