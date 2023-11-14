@@ -2,19 +2,41 @@
   tasks:
   - name: ping
     ping:
+  - name: update
+    apt: 
+      upgrade: yes
+      update_cache: yes
+    become: yes
+  - name: install curl
+    apt: name=curl state=latest update_cache=true
+    become: yes
   - name: install wget
-    apt: name=wget state=latest
+    apt: name=wget state=latest update_cache=true
     become: yes
 - hosts: web
+  become: yes
   tasks:
   - name: install unzip
     apt: name=unzip state=latest update_cache=true
-    become: yes
+  - name: pull docker script from local
+    copy:
+      src: ~/ansible/docker/dockerInstall.sh
+      dest: ~/
+  - name: install docker
+    shell:
+      cmd: bash /root/dockerInstall.sh
+  - name: rm docker script
+    shell:
+      cmd: rm dockerInstall.sh
 - hosts: loadBalance
   become: yes
   tasks:
   - name: install nginx
     apt: name=nginx state=latest update_cache=true
+  - name: pull nginx from local
+    copy:
+      src: ~/ansible/nginx/html
+      dest: /usr/local/nginx/html
   - name: start nginx
     service:
       name: nginx
