@@ -1,17 +1,21 @@
-- hosts: {{nodes}}
-  roles:
-  - role: '~/ansible/roles/install/{{shell}}Install'
-  - role: '~/ansible/roles/install/curlInstall'
-  
-  tasks:
-  - name: add dev group
-    group:
-      name: dev
-      state: present
-  - name: add users
-      name: {{users}}
-      password: {{passwords}}
-      shell: /bin/{{shell}}
-      group: dev
-    become: yes
+- name: Run shell install
+  import_role:
+    name: installs/{{shell}}Install
+  become: yes
+- name: Run Curl install
+  import_role:
+    name: installs/curlInstall
+  become: yes
+- name: add dev group
+  group:
+    name: dev
+    state: present
+  become: yes
+- name: add users
+  user:
+    name: "{{users}}"
+    password: "{{passwords}}"
+    shell: /bin/"{{shell}}"
+    group: dev
+  become: yes
       

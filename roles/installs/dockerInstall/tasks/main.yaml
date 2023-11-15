@@ -1,15 +1,12 @@
 - name: get dockerinstall file
   shell:
-    cmd: cmd -fsSL https://get.docker.com -o get-docker.sh
+    cmd: curl -fsSl https://get.docker.com -o get-docker.sh
+  become: yes
 - name: install docker
   shell:
-    cmd: sudo bash get-docker.sh
-- name: add docker grouo
-  shell:
-    cmd: sudo groupadd docker
+    cmd: bash get-docker.sh
+  become:  yes
 - name: mod user
-  shell: 
-    cmd: sudo usermod -aG docker {{user}}
-- name: restart group
   shell:
-    cmd: newgrp docker
+    cmd: sudo usermod -aG docker {{users}}
+  become: yes

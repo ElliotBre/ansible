@@ -1,6 +1,4 @@
-- hosts: {{nodes}}
-  tasks:
-  - name: Install curl
-    apt: name=curl state=present update_cache=true
-    become: yes
+- name: Install curl
+  apt: name=curl state=present update_cache=true 
+  become: yes
  
