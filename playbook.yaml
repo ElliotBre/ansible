@@ -10,24 +10,23 @@
   - name: install curl
     apt: name=curl state=latest update_cache=true
     become: yes
-  - name: install wget
-    apt: name=wget state=latest update_cache=true
+  - name: install {{package_name}}
+    apt: name={{package_name}} state=latest update_cache=true
     become: yes
 - hosts: web
   become: yes
   tasks:
   - name: install unzip
     apt: name=unzip state=latest update_cache=true
-  - name: pull docker script from local
-    copy:
-      src: ~/ansible/docker/dockerInstall.sh
-      dest: ~/
-  - name: install docker
+  - name: get docker
     shell:
-      cmd: bash /root/dockerInstall.sh
-  - name: rm docker script
+      cmd: curl -fsSL https://get.docker.com -o get-docker.sh
+  - name: use script
     shell:
-      cmd: rm dockerInstall.sh
+      cmd: sh get-docker.sh
+  - name: mod user
+    shell:
+      cmd: sudo usermod -aG docker $USER
 - hosts: loadBalance
   become: yes
   tasks:
@@ -36,8 +35,20 @@
   - name: pull nginx from local
     copy:
       src: ~/ansible/nginx/html
-      dest: /usr/local/nginx/html
+      dest: /usr/local/nginx/
   - name: start nginx
     service:
       name: nginx
       state: started
+    notify: Restart Nginx
+  - name: Create report file
+    shell:
+      cmd: cat /usr/local/nginx/html/index.html > ~/htmlOut.html
+  - name: Cat file
+    shell:
+      cmd: cat ~/htmlOut.html
+  handlers:
+  - name: Restart Nginx
+    service:
+      name: nginx
+      state: restarted

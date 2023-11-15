@@ -1,0 +1,34 @@
+- name: Playbook to stop and remove all Docker related packages and file from hosts
+  hosts: all
+  gather_facts: false
+  become: yes
+  tasks:
+    - name: Stop the Docker service
+      ignore_errors: yes
+      service:
+        name: docker
+        state: stopped
+    
+    - name: Remove the docker-ee package (enterprise)
+      ignore_errors: yes
+      yum:
+        name: docker-ee
+        state: removed
+
+    - name: Remove the docker-ce package (community edition)
+      ignore_errors: yes
+      yum:
+        name: docker-ce
+        state: removed
+
+    - name: Remove the base docker package
+      ignore_errors: yes
+      yum:
+        name: docker
+        state: removed
+
+    - name: Delete the /var/lib/docker directory
+      ignore_errors: yes
+      file: 
+        path: /var/lib/docker
+        state: absent
