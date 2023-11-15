@@ -1,0 +1,4 @@
+users: "Elliot"
+password: "password"
+shell: "zsh"
+nodes: ["all"]

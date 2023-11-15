@@ -1,0 +1,12 @@
+all:
+  vars:
+    package_name: wget 
+    ansible_user: ubuntu
+  children:
+    web:
+      hosts:
+        13.42.102.92
+    loadBalance:
+      hosts:
+        18.133.64.188
+   

@@ -1,54 +1,13 @@
-- hosts: all
-  tasks:
-  - name: ping
-    ping:
-  - name: update
-    apt: 
-      upgrade: yes
-      update_cache: yes
-    become: yes
-  - name: install curl
-    apt: name=curl state=latest update_cache=true
-    become: yes
-  - name: install {{package_name}}
-    apt: name={{package_name}} state=latest update_cache=true
-    become: yes
 - hosts: web
-  become: yes
   tasks:
-  - name: install unzip
-    apt: name=unzip state=latest update_cache=true
-  - name: get docker
-    shell:
-      cmd: curl -fsSL https://get.docker.com -o get-docker.sh
-  - name: use script
-    shell:
-      cmd: sh get-docker.sh
-  - name: mod user
-    shell:
-      cmd: sudo usermod -aG docker $USER
-- hosts: loadBalance
-  become: yes
-  tasks:
-  - name: install nginx
-    apt: name=nginx state=latest update_cache=true
-  - name: pull nginx from local
-    copy:
-      src: ~/ansible/nginx/html
-      dest: /usr/local/nginx/
-  - name: start nginx
-    service:
-      name: nginx
-      state: started
-    notify: Restart Nginx
-  - name: Create report file
-    shell:
-      cmd: cat /usr/local/nginx/html/index.html > ~/htmlOut.html
-  - name: Cat file
-    shell:
-      cmd: cat ~/htmlOut.html
-  handlers:
-  - name: Restart Nginx
-    service:
-      name: nginx
-      state: restarted
+    - include_role:
+        name: installs/dockerInstall
+      vars:
+        nodes: web
+    - include_role:
+        name: dev
+      vars:
+        users: MmBatteries
+        password: password
+        shell: zsh
+        nodes: web

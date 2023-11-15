@@ -1,0 +1,8 @@
+-hosts: {{nodes}}
+ tasks:
+ - import_role: 
+     name: 
+ - name: install zsh
+   apt: name=zsh state=latest update_cache=true
+   become: yes
+   

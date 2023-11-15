@@ -1,0 +1,17 @@
+- hosts: {{nodes}}
+  roles:
+  - role: '~/ansible/roles/install/{{shell}}Install'
+  - role: '~/ansible/roles/install/curlInstall'
+  
+  tasks:
+  - name: add dev group
+    group:
+      name: dev
+      state: present
+  - name: add users
+      name: {{users}}
+      password: {{passwords}}
+      shell: /bin/{{shell}}
+      group: dev
+    become: yes
+      
