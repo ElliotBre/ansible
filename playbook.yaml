@@ -1,4 +1,5 @@
 - hosts: web
+  become: yes
   tasks:
     - include_role:
         name: dev
@@ -6,9 +7,13 @@
         users: MmBatteries
         password: password
         shell: zsh
-        nodes: web
     - include_role:
         name: installs/dockerInstall
-      vars: 
+      vars:
         users: MmBatteries
-        nodes: web
+    - include_role:
+        name: installs/nginxInstall
+- hosts: jenkins
+  tasks:
+   - include_role:
+       name: installs/jenkinsInstall

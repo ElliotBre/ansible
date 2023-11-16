@@ -1,15 +1,18 @@
-- hosts: {{nodes}}
-  become: yes
-  tasks:
-  - name: install apt key
-    apt_key: url=https://pkg.jenkins.io/debian/jenkins.io-2023.key state=present
-  - name: ensure configuration
-    apt_repository: repo='deb https://pkg.jenkins.io/debian-stable binary/' state=present
-  - name: install jenkins
-    apt: name=jenkins state=latest update_cache=yes
-  - name: start jenkins
-    service:
-      name: jenkins
-      state: started
+- name: install apt key
+  get_url:
+    url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+    dest: /usr/share/keyrings/jenkins-keyring.asc
+    mode: '0440'
+- name: ensure configuration
+  shell:
+    cmd: echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+  https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+  /etc/apt/sources.list.d/jenkins.list > /dev/null
+- name: install jenkins
+  apt: name=jenkins state=latest update_cache=yes
+- name: start jenkins
+  service:
+    name: jenkins
+    state: started
 
 

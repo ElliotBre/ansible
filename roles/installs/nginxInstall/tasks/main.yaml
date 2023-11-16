@@ -1,0 +1,13 @@
+- name: install nginx
+  apt: name=nginx state=latest
+- name: apply html index - #scoped down because of time wanted to apply entire directory but didn't work out how
+  template:
+    src: templates/html/index.html
+    dest: /var/www/html/index.html
+- name: pray that the file exists
+  shell:
+    cmd: cat /var/www/html/index.html
+- name: start ngninx
+  service:
+    name: nginx
+    state: started
